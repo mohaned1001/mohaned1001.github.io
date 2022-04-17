@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>simple python chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>simple python web chat</h1>
+		</div>
+		<div id="massges_holder" class="body">
+		
+		</div>
+		<div class="footer">
+			<form>
+				<input type="text" name="" id="text_input" autocomplete="off"> 
+				<button onclick="sendMsg()">SEND</button>
+			</form>
+		</div>
+	</div>
+</body>
+<script>
+    const socket = new WebSocket('wss://freelancer-client.herokuapp.com/');
+	
+    socket.addEventListener('open', function (event) {
+        console.log('Connected to the WS Server!')
+    });
+	
+    socket.addEventListener('close', function (event) {
+        console.log('Disconnected from the WS Server!')
+    });
+	
+    socket.addEventListener('message', function (event) 
+	{
+		const para =document.createElement("p");
+		para.innerText = event.data;
+		document.getElementById("massges_holder").appendChild(para);
+		para.className = "message";
+		var objDiv = document.getElementById("massges_holder");
+		objDiv.scrollTop = objDiv.scrollHeight;
+    });
+	
+    const sendMsg = () => 
+	{
+		event.preventDefault();
+		
+		const para =document.createElement("p");
+		var the_input_field=document.getElementById("text_input");
+		var the_holder = document.getElementById("massges_holder");
+		para.innerText = the_input_field.value;
+		the_holder.appendChild(para);
+		para.className = "message user_message";
+		the_holder.scrollTop = the_holder.scrollHeight;
+		
+        socket.send(the_input_field.value);
+		the_input_field.value="";
+    }
+</script>
+</html>
